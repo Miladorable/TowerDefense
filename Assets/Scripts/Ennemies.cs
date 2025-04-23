@@ -2,71 +2,81 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Collections.Generic;
 
-public class Ennemies : MonoBehaviour
+public class Enemy : MonoBehaviour
 {
-    [SerializeField] private Rigidbody2D rb;
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private int maxHealth = 100;
     [SerializeField] private Tilemap pathTilemap;
 
     private int currentHealth;
     private Vector3Int currentCell;
-    private Vector3 targetWorldPos;
+    private Vector3 targetPos;
+
+    private List<Vector3Int> visitedCells = new List<Vector3Int>();
 
     void Start()
     {
-        
         currentHealth = maxHealth;
-
-        // On récupère la cellule de départ
         currentCell = pathTilemap.WorldToCell(transform.position);
-        if (pathTilemap.GetTile(currentCell) == null)
+
+        if (!IsPathTile(currentCell))
         {
-            Debug.Log("Pas sur une tuile de chemin !");
+            Debug.LogWarning("L'ennemi n'est pas sur une tuile de chemin.");
             Destroy(gameObject);
             return;
         }
 
-        targetWorldPos = pathTilemap.GetCellCenterWorld(currentCell);
+        visitedCells.Add(currentCell);
+        targetPos = pathTilemap.GetCellCenterWorld(currentCell);
     }
 
     void Update()
     {
-        // Avance vers la position cible
-        Vector3 dir = (targetWorldPos - transform.position).normalized;
-        rb.MovePosition(transform.position + dir * moveSpeed * Time.deltaTime);
+        MoveToTarget();
 
-        // Si on est arrivé à la cellule cible
-        if (Vector3.Distance(transform.position, targetWorldPos) < 0.05f)
+        if (Vector3.Distance(transform.position, targetPos) < 0.05f)
         {
             currentCell = pathTilemap.WorldToCell(transform.position);
-            FindNextTile();
+            SetNextTarget();
         }
     }
 
-    void FindNextTile()
+    void MoveToTarget()
     {
-        // Directions cardinales : haut, bas, gauche, droite
+        Vector3 direction = (targetPos - transform.position).normalized;
+        transform.position += direction * moveSpeed * Time.deltaTime;
+    }
+
+    void SetNextTarget()
+    {
         Vector3Int[] directions = {
-            Vector3Int.left,
             Vector3Int.right,
+            Vector3Int.left,
             Vector3Int.up,
             Vector3Int.down
         };
 
         foreach (var dir in directions)
         {
-            Vector3Int next = currentCell + dir;
-            if (pathTilemap.GetTile(next) != null && next != currentCell)
+            Vector3Int nextCell = currentCell + dir;
+
+            // Ne va pas vers une cellule déjà visitée
+            if (IsPathTile(nextCell) && !visitedCells.Contains(nextCell))
             {
-                targetWorldPos = pathTilemap.GetCellCenterWorld(next);
+                visitedCells.Add(nextCell);
+                targetPos = pathTilemap.GetCellCenterWorld(nextCell);
                 return;
             }
         }
 
-        Debug.Log("Plus de chemin, arrêt de l'ennemi.");
-        // Optionnel : stop, mort ou arrivée à destination
+        Debug.Log("Fin du chemin ou aucune tuile valide non visitée !");
+    }
+
+    bool IsPathTile(Vector3Int cellPos)
+    {
+        return pathTilemap.GetTile(cellPos) != null;
     }
 
     public void TakeDamage(int damage)
