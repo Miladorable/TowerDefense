@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 7082085374384843554}
   - component: {fileID: 4468706876523756304}
   - component: {fileID: 5147824394694581494}
-  m_Layer: 0
+  - component: {fileID: -2284754169542025273}
+  m_Layer: 7
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -76,8 +77,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
-  m_Color: {r: 1, g: 0.70388687, b: 0, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 22606a16272ec5b4a97b984476fbbfab, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -97,7 +98,7 @@ Rigidbody2D:
   m_GameObject: {fileID: 1057720249018317014}
   m_BodyType: 1
   m_Simulated: 1
-  m_UseFullKinematicContacts: 0
+  m_UseFullKinematicContacts: 1
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
@@ -162,4 +163,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 7082085374384843554}
-  moveSpeed: 5
+  moveSpeed: 4
+--- !u!114 &-2284754169542025273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1057720249018317014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4aa44eeb98ab42b42b61eda3f3d34f91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitPoints: 2
+  currencyWorth: 50
